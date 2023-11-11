@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/tests_page.css">
+    <title>GoLang Tetsts</title>
+</head>
+
+<body>
+    <section class="tests-grid">
+        {{ range . }}
+        <div>
+            <h1>{{ .Name }}</h1>
+            <h2>Gives:</h2>
+            <ul>
+                {{ range $key, $value := .BaseSkills }}
+                <li>{{ $key }}: {{ $value }}</li>
+                {{end}}
+            </ul>
+            <h2>Allows:</h2>
+            <ul>
+                {{ range $value := .AllowedFunctions }}
+                <li>{{ $value }}</li>
+                {{end}}
+            </ul>
+            <a href="/go-tester/test/{{ .Name }}">Test It!</a>
+        </div>
+        {{ end }}
+    </section>
+</body>
+</html>

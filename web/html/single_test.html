@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/single_test.css">
+    <title>{{ .Name }}</title>
+</head>
+<body>
+    <div id="test-details">
+        <h1> {{ .Name }}</h1>
+        <div>
+            <h2>Gives:</h2>
+            <ul>
+                {{ range $key, $value := .BaseSkills }}
+                <li>{{ $key }}: {{ $value }}</li>
+                {{end}}
+            </ul>
+        </div>
+        <div>
+            <h2>Allows:</h2>
+            <ul>
+                {{ range $value := .AllowedFunctions }}
+                <li>{{ $value }}</li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+    <button type="button" onclick="run(this)" data-run-type="check">Run with imports Check</button>
+    <button type="button" onclick="run(this)"  data-run-type="no-check">Run Without</button>
+    <br><br>
+    <textarea id="code" placeholder="Put your Code here"></textarea>
+    <textarea id="output" placeholder="Output will show here" readonly></textarea>
+</body>
+
+<script>
+    const URL = "/go-tester/run/{{.Name}}"
+
+    function run(e) {
+        const formCode = document.getElementById('code').value
+        if (formCode === "") {
+            alert("Empty Code")
+            return
+        }
+
+        const payload = {
+            code: formCode,
+            runType: e.dataset.runType
+        }
+
+        fetch(URL, {method: 'POST', body: JSON.stringify(payload)})
+        .then(response => response.text())
+        .then(text => {
+            document.getElementById('output').value = text
+        })
+        .catch(error => {
+            alert(error)
+            console.error(error)
+        })
+    }
+</script>
+
+
+</html>
