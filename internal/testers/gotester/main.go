@@ -84,23 +84,28 @@ func RunTest(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, err.Error())
 		return
 	}
-	path := "GoTester/piscine-go/" + test.ExpectedFiles[0]
+	pathh := "GoTester/piscine-go/" + test.ExpectedFiles[0]
 
-	err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
+	err := os.MkdirAll(filepath.Dir(pathh), os.ModePerm)
 	if err != nil {
 		log.Println("Error creating directories:", err)
 		return
 	}
-	err = os.WriteFile(path, []byte(result["code"]), 0644)
+	err = os.WriteFile(pathh, []byte(result["code"]), 0644)
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
-	defer os.RemoveAll(filepath.Dir(path))
+	// program
+	if path.Base(test.ExpectedFiles[0]) == "main.go" {
+		defer os.RemoveAll(filepath.Dir(pathh))
+	} else {
+		defer os.Remove(pathh)
+	}
 
 	// maybe you wanna run without imports check?
 	if result["runType"] == "check" {
-		args := []string{path}
+		args := []string{pathh}
 		args = append(args, test.AllowedFunctions...)
 
 		cmd := exec.Command("./GoTester/rc/rc", args...)
