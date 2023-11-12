@@ -9,52 +9,75 @@
 </head>
 
 <body>
-    <div id="test-details">
-        {{ if eq .Test.Type "" }}
-        <div>
-            <h2>Gives:</h2>
-            <ul>
-                {{ range $key, $value := .Test.BaseSkills }}
-                <li>{{ $key }}: {{ $value }}</li>
-                {{end}}
-            </ul>
-        </div>
-        <div>
-            <h2>Allows:</h2>
-            <ul>
-                {{ range $value := .Test.AllowedFunctions }}
-                <li>{{ $value }}</li>
-                {{end}}
-            </ul>
-        </div>
-        {{ else }}
-        <div>
-            <h2>Expected files:</h2>
-            <ul>
-                {{ range $file := .Test.ExpectedFiles }}
-                <li>{{ $file }}</li>
-                {{end}}
-            </ul>
-        </div>
-        {{ end }}
-    </div>
-    <iframe src="{{ .Test.SubjectPath }}" width="100%"></iframe>
-    {{ if eq .AceMode "golang" }}
-    <button type="button" onclick="run(this)" data-run-type="check">Run with imports Check</button>
-    {{ end }}
-    <button type="button" onclick="run(this)" data-run-type="no-check">Normal Run</button>
-    <br><br>
-    <div id="editor-box">
-        <div id="editor" style="width: 100%; height: 100%; position: absolute;">// Your Code Here</div>
-    </div>
-    <div id="editor-box">
-        <div id="output" style="width: 100%; height: 100%; position: absolute;">Output Here!</div>
-    </div>
+    <section id="container">
+        <section id="left">
+            <div id="editor-box">
+                <div class="editor" id="editor">// Your Code Here</div>
+            </div>
+            <div id="output-box">
+                <div class="editor" id="output">Output Here!</div>
+            </div>
+        </section>
+        <section id="right">
+            <iframe src="{{ .Test.SubjectPath }}" width="100%"></iframe>
+            <div id="buttons">
+                {{ if eq .AceMode "golang" }}
+                <button type="button" onclick="run(this)" data-run-type="check">Run with imports Check</button>
+                {{ end }}
+                <button type="button" onclick="run(this)" data-run-type="no-check">Normal Run</button>
+            </div>
+            {{ if eq .Test.Type "" }}
+            <div>
+
+                <h2>Gives:</h2>
+                <ul>
+                    {{ range $key, $value := .Test.BaseSkills }}
+                    <li>{{ $key }}: {{ $value }}</li>
+                    {{end}}
+                </ul>
+            </div>
+            <div>
+                <h2>Allows:</h2>
+                <ul>
+                    {{ range $value := .Test.AllowedFunctions }}
+                    <li>{{ $value }}</li>
+                    {{end}}
+                </ul>
+            </div>
+            {{ else }}
+            <div>
+                <h2>Expected files:</h2>
+                <ul>
+                    {{ range $file := .Test.ExpectedFiles }}
+                    <li>{{ $file }}</li>
+                    {{end}}
+                </ul>
+            </div>
+            {{ end }}
+            <div>
+        </section>
+    </section>
 </body>
+
+<script src="https://ajaxorg.github.io/ace-builds/src-min/ace.js"></script>
+<script>
+    const editor = document.getElementById('editor')
+    const output = document.getElementById('output')
+    ace.edit(editor, {
+        theme: 'ace/theme/cobalt',
+        mode: 'ace/mode/{{.AceMode}}',
+        fontSize: 18
+    })
+
+    ace.edit(output, {
+        theme: 'ace/theme/cobalt',
+        readOnly: true
+    })
+</script>
+
 
 <script>
     const URL = "/go-tester/run/{{.Test.Name}}"
-
     function run(e) {
         const aceCode = ace.edit("editor").getValue()
         if (aceCode === "") {
@@ -77,22 +100,6 @@
                 console.error(error)
             })
     }
-</script>
-
-<script src="https://ajaxorg.github.io/ace-builds/src-min/ace.js"></script>
-<script>
-    const editor = document.getElementById('editor')
-    const output = document.getElementById('output')
-    ace.edit(editor, {
-        theme: 'ace/theme/cobalt',
-        mode : 'ace/mode/{{.AceMode}}',
-        fontSize : 18
-    })
-
-    ace.edit(output, {
-        theme: 'ace/theme/cobalt',
-        readOnly : true
-    })
 </script>
 
 </html>
