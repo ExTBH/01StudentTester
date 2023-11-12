@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/ExTBH/01StudentTester/internal/testers/gotester"
+	"github.com/ExTBH/01StudentTester/internal/testers/jstester"
 )
 
 var homeTmplt *template.Template
@@ -23,6 +24,9 @@ func main() {
 	mux.HandleFunc("/go-tester", gotester.Home)
 	mux.HandleFunc("/go-tester/test/", gotester.SingleTest)
 	mux.HandleFunc("/go-tester/run/", gotester.RunTest)
+
+	mux.HandleFunc("/js-tester", jstester.Home)
+	mux.HandleFunc("/js-tester/run/", jstester.SingleTest)
 
 	cssFS := http.FileServer(http.Dir("web/css"))
 	mux.Handle("/css/", http.StripPrefix("/css/", cssFS))

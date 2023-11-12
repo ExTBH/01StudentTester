@@ -29,18 +29,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if tests == nil {
-		tests = helpers.Tests()
+		tests = helpers.GoTests()
 	}
 
-	slices.SortFunc(tests, func(a, b helpers.Test) int {
-		if a.BaseSkills["prog"] == b.BaseSkills["prog"] {
-			return 0
-		}
-		if a.BaseSkills["prog"] < b.BaseSkills["prog"] {
-			return -1
-		}
-		return 1
-	})
+	slices.SortFunc(tests, helpers.SortTestsProg)
 	homeTmplt.Execute(w, tests)
 }
 
@@ -54,21 +46,32 @@ func SingleTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	testName := path.Base(r.URL.Path)
-
-	test := findTestWithName(testName)
+	if tests == nil {
+		tests = helpers.GoTests()
+	}
+	test := helpers.FindTestWithName(testName, tests)
 
 	if test == nil {
-		http.Redirect(w, r, "/go-tester", http.StatusTemporaryRedirect)
+		http.Error(w, "Test Not Found", http.StatusNotFound)
 		return
 	}
-
-	testTmplt.Execute(w, test)
+	data := struct {
+		Test    *helpers.Test
+		AceMode string
+	}{
+		Test:    test,
+		AceMode: "golang",
+	}
+	testTmplt.Execute(w, data)
 
 }
 
 func RunTest(w http.ResponseWriter, r *http.Request) {
 	testName := path.Base(r.URL.Path)
-	test := findTestWithName(testName)
+	if tests == nil {
+		tests = helpers.GoTests()
+	}
+	test := helpers.FindTestWithName(testName, tests)
 	if test == nil {
 		http.Redirect(w, r, "/go-tester", http.StatusTemporaryRedirect)
 		return
@@ -93,6 +96,7 @@ func RunTest(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
+	defer os.RemoveAll(filepath.Dir(path))
 
 	// maybe you wanna run without imports check?
 	if result["runType"] == "check" {
@@ -114,13 +118,4 @@ func RunTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprint(w, "Congrats, Passed All Cases!")
-}
-
-func findTestWithName(name string) *helpers.Test {
-	for _, test := range tests {
-		if test.Name == name {
-			return &test
-		}
-	}
-	return nil
 }

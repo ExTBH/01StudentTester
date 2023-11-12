@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quests</title>
+</head>
+<!-- <body style="display: flex;">
+    {{ range $quest := . }}
+    <table border="1">
+        {{ if eq $quest.Type "raid" }}
+        <tr style="background-color: orangered;"><th><a href="/js-tester/run/{{$quest.Name}}">{{ $quest.Name }} - Raid</a></th></tr>
+        {{ else }}
+        <tr><th>{{ $quest.Name }}</th></tr>
+        {{ end }}
+
+        {{ range $test := $quest.Children }}
+        {{ if eq $test.Type "optional" }}
+            <tr style="background-color: gold;">
+                <td>
+                    <a href="/js-tester/run/{{ $quest.Name }}/{{ $test.Name }}">{{ $test.Name }}</a>
+                </td>
+            </tr>
+        {{ else }}
+        <tr>
+            <td>
+                <a href="/js-tester/run/{{ $quest.Name }}/{{ $test.Name }}">{{ $test.Name }}</a>
+            </td>
+        </tr>
+        {{ end }}
+        {{ end }}
+    </table>
+    {{ end }}
+</body> -->
+
+<body>
+    <table border="1" style="text-align: center;">
+        {{ range $quest := . }}
+        {{ if eq $quest.Type "raid" }}
+        <tr style="background-color: orangered;">
+            <td><a href="/js-tester/run/{{$quest.Name}}">{{ $quest.Name }} - Raid</a></td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td>{{ $quest.Name }}</td>
+            {{ range $test := $quest.Children }}
+
+            {{ if eq $test.Type "optional" }}
+            <td style="background-color: gold;">
+                <a href="/js-tester/run/{{ $quest.Name }}/{{ $test.Name }}">{{ $test.Name }}</a>
+            </td>
+            {{ else }}
+            <td>
+                <a href="/js-tester/run/{{ $quest.Name }}/{{ $test.Name }}">{{ $test.Name }}</a>
+            </td>
+            {{ end }}
+            {{ end }}
+        </tr>
+        {{ end }}
+
+        {{ end }}
+    </table>
+</body>
+
+</html>

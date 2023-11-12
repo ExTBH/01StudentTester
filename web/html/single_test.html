@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/single_test.css">
-    <title>{{ .Name }}</title>
+    <title>{{ .Test.Name }}</title>
 </head>
+
 <body>
     <div id="test-details">
-        <h1> {{ .Name }}</h1>
+        {{ if eq .Test.Type "" }}
         <div>
             <h2>Gives:</h2>
             <ul>
-                {{ range $key, $value := .BaseSkills }}
+                {{ range $key, $value := .Test.BaseSkills }}
                 <li>{{ $key }}: {{ $value }}</li>
                 {{end}}
             </ul>
@@ -21,45 +22,78 @@
         <div>
             <h2>Allows:</h2>
             <ul>
-                {{ range $value := .AllowedFunctions }}
+                {{ range $value := .Test.AllowedFunctions }}
                 <li>{{ $value }}</li>
                 {{end}}
             </ul>
         </div>
+        {{ else }}
+        <div>
+            <h2>Expected files:</h2>
+            <ul>
+                {{ range $file := .Test.ExpectedFiles }}
+                <li>{{ $file }}</li>
+                {{end}}
+            </ul>
+        </div>
+        {{ end }}
     </div>
+    <iframe src="{{ .Test.SubjectPath }}" width="100%"></iframe>
+    {{ if eq .AceMode "golang" }}
     <button type="button" onclick="run(this)" data-run-type="check">Run with imports Check</button>
-    <button type="button" onclick="run(this)"  data-run-type="no-check">Run Without</button>
+    {{ end }}
+    <button type="button" onclick="run(this)" data-run-type="no-check">Normal Run</button>
     <br><br>
-    <textarea id="code" placeholder="Put your Code here"></textarea>
-    <textarea id="output" placeholder="Output will show here" readonly></textarea>
+    <div id="editor-box">
+        <div id="editor" style="width: 100%; height: 100%; position: absolute;">// Your Code Here</div>
+    </div>
+    <!-- <textarea id="output" placeholder="Output will show here" readonly></textarea> -->
+    <div id="editor-box">
+        <div id="output" style="width: 100%; height: 100%; position: absolute;">Output Here!</div>
+    </div>
 </body>
 
 <script>
-    const URL = "/go-tester/run/{{.Name}}"
+    const URL = "/go-tester/run/{{.Test.Name}}"
 
     function run(e) {
-        const formCode = document.getElementById('code').value
-        if (formCode === "") {
+        const aceCode = ace.edit("editor").getValue()
+        if (aceCode === "") {
             alert("Empty Code")
             return
         }
 
         const payload = {
-            code: formCode,
+            code: aceCode,
             runType: e.dataset.runType
         }
 
-        fetch(URL, {method: 'POST', body: JSON.stringify(payload)})
-        .then(response => response.text())
-        .then(text => {
-            document.getElementById('output').value = text
-        })
-        .catch(error => {
-            alert(error)
-            console.error(error)
-        })
+        fetch(URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(response => response.text())
+            .then(text => {
+                ace.edit('output').setValue(text)
+            })
+            .catch(error => {
+                alert(error)
+                console.error(error)
+            })
     }
 </script>
 
+<script src="https://ajaxorg.github.io/ace-builds/src-min/ace.js"></script>
+<script>
+    const editor = document.getElementById('editor')
+    const output = document.getElementById('output')
+    ace.edit(editor, {
+        theme: 'ace/theme/cobalt',
+        mode : 'ace/mode/{{.AceMode}}',
+        fontSize : 18
+    })
+
+    ace.edit(output, {
+        theme: 'ace/theme/cobalt',
+        readOnly : true
+    })
+</script>
 
 </html>

@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: royalblue;
+    background-color: rgb(97, 125, 208);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,9 +30,13 @@ button {
     cursor: pointer;
 }
 
-#code,
 #output {
     width: 100%;
     height: 300px;
-    white-space: pre;
+}
+
+#editor-box {
+    position: relative;
+    width: 100%;
+    height: 300px;
 }
