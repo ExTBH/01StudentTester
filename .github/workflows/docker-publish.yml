@@ -1,8 +1,8 @@
-name: 🐳 On Master - Build and Test Docker Image
+name: 🐳 On Main - Build and Test Docker Image
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
 
 jobs:
   build-image:
