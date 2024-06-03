@@ -2,6 +2,17 @@
 A simple tool that helps testing quests/exams/...
 
 ## How to Run
+### New Docker way
+> this will take a while to download it if its the first time so wait until you see `listening on http://localhost:2004`
+```sh
+docker run --name tester -p 2004:2004 ghcr.io/extbh/01studenttester:latest
+```
+and to stop it
+```sh
+docker stop tester
+```
+
+### Old way
 Start with running 
 ```sh
 ./prepare.sh
