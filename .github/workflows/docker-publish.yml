@@ -23,5 +23,5 @@ jobs:
       - name: 🏗️ Build the Image
         if: always()
         run: |
-          docker build . --tag ghcr.io/ExTBH/01StudentTester:latest
-          docker push ghcr.io/ExTBH/01StudentTester:latest
+          docker build . --tag ghcr.io/ExTBH/01studenttester:latest
+          docker push ghcr.io/ExTBH/01studenttester:latest
