@@ -8,3 +8,9 @@ button {
   cursor: pointer;
   padding: 10px 20px;
 } */
+
+body {
+  margin: 0;
+  /* overflow: hidden; */
+  padding: 10px;
+}

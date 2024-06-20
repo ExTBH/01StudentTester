@@ -1,10 +1,34 @@
 
-.treeContainer {
+/* .treeContainer {
     width: 300px;
-    height: 400px;
+    height: 100%;
 }
 
 .tree {
     width: 100%;
     height: 100%;
+    overflow-y: scroll;
+} */
+
+.mainLayout {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    gap: 10px;
+}
+
+
+.treeContainer {
+    /* margin: 10px; */
+    width: 300px;
+    height: 100%; /* 100% of viewport height */
+    max-height: 95vh; /* Maximum height of viewport */
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Arrange children in a column */
+}
+
+.tree {
+    flex: 1; 
+    overflow-y: auto; 
 }
