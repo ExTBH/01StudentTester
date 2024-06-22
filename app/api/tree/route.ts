@@ -13,7 +13,8 @@ export async function GET(req: Request) {
     let checkpoint: Checkpoint
 
     try {
-        const response = await fetch('https://learn.reboot01.com/api/object/bahrain')
+        // revalidate every 5 hours
+        const response = await fetch('https://learn.reboot01.com/api/object/bahrain', {next: { revalidate: 18000 }})
         const data = await response.json();
         checkpoint = data['children']['bh-module']['children']['checkpoint'] as Checkpoint;
     } catch (error) {
@@ -35,9 +36,7 @@ export async function GET(req: Request) {
             key,
             label: question.name,
             children: [],
-            data: {
-                question,
-            },
+            data: question
         };
 
         groupedNodes[prog].push(node);

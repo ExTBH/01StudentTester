@@ -11,7 +11,6 @@ import { Button } from "primereact/button";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Dialog } from "primereact/dialog";
 import { Sidebar } from "primereact/sidebar";
-import { Question } from "./types";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -29,6 +28,7 @@ export default function Home() {
   const [questionBody, setQuestionBody] = useState("");
 
   const toastRef = useRef(null);
+  const editorRef = useRef(null);
 
   useEffect(() => {
     fetch("/api/tree")
@@ -52,7 +52,7 @@ export default function Home() {
     setQuestionTitle(currentQuestion.data.name);
     setQuestionBody("Loading Question Body...");
     fetch(
-      `/api/cors-free?url=https://learn.reboot01.com${currentQuestion.data.question.attrs.subject}`
+      `/api/cors-free?url=https://learn.reboot01.com${currentQuestion.data.attrs.subject}`
     )
       .then((res) => res.text())
       .then((data) => {
@@ -68,6 +68,49 @@ export default function Home() {
         });
       });
   }, [currentQuestion]);
+
+  function submitCode() {
+    setShowLoader(true);
+    setDialogVisible(true);
+    setHeader("Checking your code");
+
+    // @ts-expect-error fuck entyped refs
+    const currentCode: string = editorRef.current.getValue();
+
+    fetch("/api/runner", {
+      method: "POST",
+      body: JSON.stringify({
+        code: currentCode,
+        question: currentQuestion?.data,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // Dialgo can be closed while test is running
+        setDialogVisible(true);
+
+        setShowLoader(false);
+
+        if (!data.passed) {
+          setHeader("You didn't pass :(");
+          // @ts-expect-error fuck entyped refs
+          currentQuestion.icon = "pi pi-times";
+        } else {
+          setHeader("You passed!!");
+          // @ts-expect-error fuck entyped refs
+          currentQuestion.icon = "pi pi-check";
+        }
+
+        setBody(data.message);
+      })
+      .catch((error) => {
+        setShowLoader(false);
+        setHeader("Something went wrong");
+        if (error) {
+          setBody(error);
+        }
+      });
+  }
 
   return (
     <main className={styles.mainLayout}>
@@ -96,7 +139,7 @@ export default function Home() {
             <ProgressSpinner />
           </div>
         ) : (
-          <p>{body}</p>
+          <pre>{body}</pre>
         )}
       </Dialog>
 
@@ -113,7 +156,7 @@ export default function Home() {
           <>
             <h4>What can i use to solve this Question?</h4>
             <ul>
-              {currentQuestion?.data.question.attrs.allowedFunctions.map((func: Key) => (
+              {currentQuestion?.data.attrs.allowedFunctions.map((func: Key) => (
                 <li key={func}>{func}</li>
               ))}
             </ul>
@@ -167,33 +210,30 @@ export default function Home() {
           }}
         >
           <Button
-            onClick={() => {
-              setShowLoader(true);
-              setDialogVisible(true);
-              setHeader("Checking your code");
-              setBody("This might take a while, please be patient");
+            icon="pi pi-check"
+            label="Run"
+            onClick={submitCode}
+            disabled={!currentQuestion}
+          ></Button>
 
-              setTimeout(() => {
-                setShowLoader(false);
-                setHeader("Passed!");
-                setBody("Your code is correct, well done!");
-                if (!currentQuestion) return;
-                currentQuestion.icon = "pi pi-check";
-              }, 2000);
-            }}
-          >
-            Submit my Code
-          </Button>
-          <Button onClick={() => setSidebarVisible(true)} security="secondary">
-            Show Question
-          </Button>
+          <Button
+            icon="pi pi-file"
+            label="Show Question"
+            onClick={() => setSidebarVisible(true)}
+            disabled={!currentQuestion}
+          ></Button>
         </div>
         <Editor
+          width="100%"
           language="go"
           theme="vs-dark"
-          value={
+          defaultValue={
             "// Made by @ExTBH (Natheer)\n// your code goes here, have fun!\n"
           }
+          onMount={(editor) => {
+            // @ts-expect-error fuck untyped refs
+            editorRef.current = editor;
+          }}
         />
       </div>
     </main>

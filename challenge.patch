@@ -1,0 +1,15 @@
+diff --git a/lib/challenge/challenge.go b/lib/challenge/challenge.go
+index 2d55a22..4687f0e 100644
+--- a/lib/challenge/challenge.go
++++ b/lib/challenge/challenge.go
+@@ -124,7 +124,9 @@ func Fatalf(format string, a ...interface{}) {
+ 
+ func ProgramStdin(exercise, input string, args ...string) {
+ 	run := func(pkg string) (string, bool) {
+-		binaryPath := path.Join(os.TempDir(), "binaries", path.Base(path.Dir(pkg)), path.Base(pkg))
++		tempDir, _ := os.MkdirTemp(os.TempDir(), "binaries-")
++		defer os.RemoveAll(tempDir)
++		binaryPath := path.Join(tempDir, "binaries", path.Base(path.Dir(pkg)), path.Base(pkg))
+ 		if _, err := os.Stat(binaryPath); os.IsNotExist(err) {
+ 			if b, err := exec.Command("go", "build", "-o", binaryPath, pkg).CombinedOutput(); err != nil {
+ 				return string(b), false
