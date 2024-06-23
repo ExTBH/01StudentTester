@@ -36,4 +36,6 @@ RUN npm install
 
 RUN ./prepare.sh
 
-CMD ["npm", "run", "dev"]
+RUN npm run build
+
+CMD ["npm", "run", "start"]
