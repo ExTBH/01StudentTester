@@ -4,7 +4,7 @@ import "primeicons/primeicons.css";
 import styles from "./page.module.css";
 import { Tree } from "primereact/tree";
 import { TreeNode } from "primereact/treenode";
-import { Key, useEffect, useRef, useState } from "react";
+import { Key, Suspense, useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import Editor from "@monaco-editor/react";
 import { Button } from "primereact/button";
@@ -166,33 +166,46 @@ export default function Home() {
         )}
       </Sidebar>
       <div className={styles.treeContainer}>
-        <Tree
-          value={nodes}
-          className={styles.tree}
-          selectionMode="single"
-          selectionKeys={selectedKey}
-          onSelectionChange={(e) => {
-            if (
-              e.value &&
-              typeof e.value === "string" &&
-              e.value.startsWith("prog")
-            ) {
-              return;
-            }
-            setSelectedKey(e.value as string);
-            // get the question data
-            if (!nodes) return;
-
-            nodes.find((node) => {
-              if (!node.children) return false;
-              for (const child of node.children) {
-                if (child.key === e.value) {
-                  setCurrentQuestion(child);
-                }
+        {!nodes ? (
+          <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          
+          }}>
+            <ProgressSpinner />
+          </div>
+        ) : (
+          <Tree
+            value={nodes}
+            className={styles.tree}
+            selectionMode="single"
+            selectionKeys={selectedKey}
+            onSelectionChange={(e) => {
+              if (
+                e.value &&
+                typeof e.value === "string" &&
+                e.value.startsWith("prog")
+              ) {
+                return;
               }
-            });
-          }}
-        />
+              setSelectedKey(e.value as string);
+              // get the question data
+              if (!nodes) return;
+
+              nodes.find((node) => {
+                if (!node.children) return false;
+                for (const child of node.children) {
+                  if (child.key === e.value) {
+                    setCurrentQuestion(child);
+                  }
+                }
+              });
+            }}
+          />
+        )}
       </div>
       <div className={styles.codeContainer}>
         <div className={styles.codeButtonsContainer}>
