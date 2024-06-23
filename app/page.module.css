@@ -1,0 +1,47 @@
+.pageContainer {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    /* background: #aaa; */
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    overflow: hidden;
+    display: flex;
+}
+
+.treeContainer {
+    flex: 0 0 30%; /* Take 30% of the width */
+    margin: 20px;
+    max-width: 300px; /* Maximum width of 300px */
+}
+
+.tree {
+    height: 100%;
+    overflow: auto; /* Enable scrolling if content overflows */
+}
+
+
+.codeContainer {
+    flex: 1; /* Fill remaining space */
+    margin: 20px;
+    /* background: #aaa; */
+    margin-left: 20px; /* Add margin between tree and code container */
+}
+
+.codeButtonsContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.editorContainer  {
+    height: 100%;
+    width: 100%;
+    background: #aaa;
+    overflow: hidden;
+}
+
+.editor {
+    border-radius: 15px;
+}
