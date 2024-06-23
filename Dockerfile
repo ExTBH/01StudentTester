@@ -1,6 +1,8 @@
 # Use the official Ubuntu image as a base
 FROM ubuntu:22.04
 
+EXPOSE 3000
+
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -30,8 +32,6 @@ WORKDIR /app
 COPY . /app
 
 RUN npm install
-
-EXPOSE 3000
 
 
 RUN ./prepare.sh
