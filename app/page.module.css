@@ -1,34 +1,47 @@
-
-/* .treeContainer {
-    width: 300px;
-    height: 100%;
-}
-
-.tree {
+.pageContainer {
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
-} */
-
-.mainLayout {
+    /* background: #aaa; */
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    overflow: hidden;
     display: flex;
-    flex-direction: row;
-    margin: 10px;
-    gap: 10px;
 }
 
-
 .treeContainer {
-    /* margin: 10px; */
-    width: 300px;
-    height: 100%; /* 100% of viewport height */
-    max-height: 95vh; /* Maximum height of viewport */
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    display: flex; /* Use flexbox for layout */
-    flex-direction: column; /* Arrange children in a column */
+    flex: 0 0 30%; /* Take 30% of the width */
+    margin: 20px;
+    max-width: 300px; /* Maximum width of 300px */
 }
 
 .tree {
-    flex: 1; 
-    overflow-y: auto; 
+    height: 100%;
+    overflow: auto; /* Enable scrolling if content overflows */
+}
+
+
+.codeContainer {
+    flex: 1; /* Fill remaining space */
+    margin: 20px;
+    /* background: #aaa; */
+    margin-left: 20px; /* Add margin between tree and code container */
+}
+
+.codeButtonsContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.editorContainer  {
+    height: 100%;
+    width: 100%;
+    background: #aaa;
+    overflow: hidden;
+}
+
+.editor {
+    border-radius: 15px;
 }

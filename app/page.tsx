@@ -113,7 +113,7 @@ export default function Home() {
   }
 
   return (
-    <main className={styles.mainLayout}>
+    <main className={styles.pageContainer}>
       <Toast position="top-left" ref={toastRef} />
       <Dialog
         draggable={false}
@@ -165,7 +165,6 @@ export default function Home() {
           </>
         )}
       </Sidebar>
-
       <div className={styles.treeContainer}>
         <Tree
           value={nodes}
@@ -195,20 +194,8 @@ export default function Home() {
           }}
         />
       </div>
-      <div
-        style={{
-          flex: 1,
-          height: "90vh",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
+      <div className={styles.codeContainer}>
+        <div className={styles.codeButtonsContainer}>
           <Button
             icon="pi pi-check"
             label="Run"
@@ -223,8 +210,9 @@ export default function Home() {
             disabled={!currentQuestion}
           ></Button>
         </div>
+
         <Editor
-          width="100%"
+          className={styles.editor}
           language="go"
           theme="vs-dark"
           defaultValue={
@@ -233,6 +221,9 @@ export default function Home() {
           onMount={(editor) => {
             // @ts-expect-error fuck untyped refs
             editorRef.current = editor;
+            window.addEventListener("resize", () => {
+              editor.layout({} as any);
+            });
           }}
         />
       </div>

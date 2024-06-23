@@ -9,6 +9,8 @@ if [ "$#" -lt 2 ]; then
 fi
 
 
+RC_BIN="$(pwd)/rc/rc"
+
 # Read STDIN while preserving new lines
 CODE=""
 while IFS= read -r line || [ -n "$line" ]; do
@@ -51,13 +53,21 @@ fi
 # pipe code from stdin to the student file
 echo -e $CODE > $temp_dir/piscine-go/$2
 
+
 # run test
 cd $temp_dir/go-tests
-go mod tidy
 go get student
 
-
 set +e
+
+# pass import checks as arguments
+output=$($RC_BIN "$temp_dir/piscine-go/$2" "$@")
+exit_code=$?
+
+if [ $exit_code -ne 0 ]; then
+    echo -e "$output" >&2
+    exit $exit_code
+fi
 
 output=$(go run ./tests/$1_test/main.go)
 exit_code=$?

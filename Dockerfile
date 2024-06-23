@@ -1,21 +1,3 @@
-# FROM node:22-alpine
-
-# RUN apk add --no-cache wget tar
-
-# ENV GO_VERSION=1.18
-
-
-# # Download and install Go
-# RUN wget https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
-#     tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
-#     rm go${GO_VERSION}.linux-amd64.tar.gz
-
-
-# # Set Go environment variables
-# ENV GOPATH /go
-# ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-
-
 # Use the official Ubuntu image as a base
 FROM ubuntu:22.04
 
@@ -43,7 +25,6 @@ RUN add-apt-repository ppa:longsleep/golang-backports -y && \
     ln -s /usr/lib/go-1.18/bin/go /usr/local/bin/go
 
 
-
 WORKDIR /app
 
 COPY . /app
@@ -52,5 +33,7 @@ RUN npm install
 
 EXPOSE 3000
 
+
+RUN ./prepare.sh
 
 CMD ["npm", "run", "dev"]

@@ -1,5 +1,5 @@
 import { Run, RunResult } from "@/app/types";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { NextResponse } from "next/server";
 
 async function runTest(run: Run): Promise<RunResult> {
@@ -27,7 +27,9 @@ async function runTest(run: Run): Promise<RunResult> {
   });
 }
 
+
 export async function POST(req: Request) {
+  const startTime = Date.now();
   const run: Run = await req.json();
 
   if (!run) {
@@ -47,5 +49,9 @@ export async function POST(req: Request) {
 
   const runRes = await runTest(run);
 
-  return NextResponse.json({ passed: runRes.passed, message: runRes.output });
+  const endTime = Date.now();
+  const durationInSeconds = (endTime - startTime) / 1000;
+  console.log(`Duration: ${durationInSeconds} seconds`);
+
+  return NextResponse.json({ passed: runRes.passed, message: runRes.output, durationInSeconds });
 }
