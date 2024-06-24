@@ -38,7 +38,7 @@ function createFileSync(filePath: string, content: string): void {
   writeFileSync(filePath, content);
 }
 
-export function prepareAndRunTest(run: Run): RunResult{
+export function prepareAndRunTest(run: Run): RunResult {
   let tempDir: string;
   // preparing Stage
   try {
@@ -47,31 +47,43 @@ export function prepareAndRunTest(run: Run): RunResult{
     mkdirSync(`${tempDir}/go-tests/lib`, { recursive: true });
 
     copyRecursiveSync("./piscine-go-template", `${tempDir}/piscine-go/`);
-    copyRecursiveSync(
-      "./go-tests/lib",
-      `${tempDir}/go-tests/lib`
-    );
+    copyRecursiveSync("./go-tests/lib", `${tempDir}/go-tests/lib`);
 
     copyFileSync("./go-tests/go.mod", `${tempDir}/go-tests/go.mod`);
     copyFileSync("./go-tests/go.sum", `${tempDir}/go-tests/go.sum`);
 
-
-    // COpy test files
-    createFileSync(`${tempDir}/go-tests/tests/${run.question.name}_test/main.go`, '')
-    copyFileSync(
-    `./go-tests/tests/${run.question.name}_test/main.go`,
-    `${tempDir}/go-tests/tests/${run.question.name}_test/main.go`
-    )
-
-
+    // Copy test files
     createFileSync(
-      `${tempDir}/go-tests/solutions/${run.question.name}/main.go`,
-      ''
-    )
-    copyFileSync(
-      `./go-tests/solutions/${run.question.name}/main.go`,
-      `${tempDir}/go-tests/solutions/${run.question.name}/main.go`
+      `${tempDir}/go-tests/tests/${run.question.name}_test/main.go`,
+      ""
     );
+    copyFileSync(
+      `./go-tests/tests/${run.question.name}_test/main.go`,
+      `${tempDir}/go-tests/tests/${run.question.name}_test/main.go`
+    );
+
+    // if the question is a function
+    if (run.question.attrs.expectedFiles[0].endsWith("main.go")) {
+      createFileSync(
+        `${tempDir}/go-tests/solutions/${run.question.name}/main.go`,
+        ""
+      );
+
+      copyFileSync(
+        `./go-tests/solutions/${run.question.name}/main.go`,
+        `${tempDir}/go-tests/solutions/${run.question.name}/main.go`
+      );
+    } else {
+      createFileSync(
+        `${tempDir}/go-tests/solutions/${run.question.name}.go`,
+        ""
+      );
+
+      copyFileSync(
+        `./go-tests/solutions/${run.question.name}.go`,
+        `${tempDir}/go-tests/solutions/${run.question.name}.go`
+      );
+    }
 
     // Create student answer file
     createFileSync(
@@ -134,5 +146,5 @@ export function prepareAndRunTest(run: Run): RunResult{
   return {
     passed: true,
     output: "",
-  } ;
+  };
 }
