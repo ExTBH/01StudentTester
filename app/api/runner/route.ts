@@ -1,8 +1,8 @@
 import { Run, RunResult } from "@/app/types";
-import { exec,  } from "child_process";
+import { exec } from "child_process";
 import { NextResponse } from "next/server";
-import { Mutex } from 'async-mutex';
-
+import { Mutex } from "async-mutex";
+import { prepareAndRunTest } from "./helpers";
 
 const MAX_CONCURRENT_TESTS = 10;
 const semaphore = new Mutex();
@@ -13,39 +13,13 @@ async function runTestWithSemaphore(run: Run) {
   await semaphore.acquire();
   try {
     runningTests++;
-    const result = await runTest(run);
+    const result = prepareAndRunTest(run);
     return result;
   } finally {
     runningTests--;
     semaphore.release();
   }
 }
-
-async function runTest(run: Run): Promise<RunResult> {
-  return new Promise((resolve) => {
-    const child = exec(
-      `./run_test.sh ${run.question.name} ${
-        run.question.attrs.expectedFiles[0]
-      } ${run.question.attrs.allowedFunctions.join(" ")}`,
-      (error, stdout, stderr) => {
-        console.log(stdout);
-        if (error) {
-          resolve({
-            passed: false,
-            output: stderr,
-          });
-        }
-        resolve({
-          passed: true,
-          output: stdout,
-        });
-      }
-    );
-    child.stdin?.write(run.code);
-    child.stdin?.end();
-  });
-}
-
 
 export async function POST(req: Request) {
   const run: Run = await req.json();
