@@ -21,9 +21,11 @@ export type Checkpoint = {
   };
 };
 
+export type RunType = 'full' | 'no-rc';
 export type Run = {
   question: Question;
   code: string;
+  type: RunType;
 };
 
 export type RunResult = {

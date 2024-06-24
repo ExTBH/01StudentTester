@@ -13,6 +13,8 @@ import { Dialog } from "primereact/dialog";
 import { Sidebar } from "primereact/sidebar";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import { SplitButton } from "primereact/splitbutton";
+import { RunType } from "./types";
 
 export default function Home() {
   const [nodes, setNodes] = useState<TreeNode[]>();
@@ -69,7 +71,7 @@ export default function Home() {
       });
   }, [currentQuestion]);
 
-  function submitCode() {
+  function submitCode(mode: RunType) {
     setShowLoader(true);
     setDialogVisible(true);
     setHeader("Checking your code");
@@ -82,6 +84,7 @@ export default function Home() {
       body: JSON.stringify({
         code: currentCode,
         question: currentQuestion?.data,
+        type: mode
       }),
     })
       .then((res) => res.json())
@@ -168,13 +171,13 @@ export default function Home() {
       <div className={styles.treeContainer}>
         {!nodes ? (
           <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          
-          }}>
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
             <ProgressSpinner />
           </div>
         ) : (
@@ -209,12 +212,18 @@ export default function Home() {
       </div>
       <div className={styles.codeContainer}>
         <div className={styles.codeButtonsContainer}>
-          <Button
+          <SplitButton
             icon="pi pi-check"
             label="Run"
-            onClick={submitCode}
+            onClick={() => submitCode("full")}
             disabled={!currentQuestion}
-          ></Button>
+            model={[
+              {
+                label: "Without imports",
+                command: () => submitCode("no-rc"),
+              },
+            ]}
+          ></SplitButton>
 
           <Button
             icon="pi pi-file"

@@ -114,19 +114,21 @@ export function prepareAndRunTest(run: Run): RunResult {
     };
   }
 
-  // Run Imports check
-  try {
-    const res = execSync(
-      `./rc/rc ${tempDir}/piscine-go/${
-        run.question.attrs.expectedFiles[0]
-      } ${run.question.attrs.allowedFunctions.join(" ")}`
-    );
-  } catch (error: any) {
-    execSync(`rm -rf ${tempDir}`);
-    return {
-      passed: false,
-      output: error.stdout.toString().trim() || error.toString(),
-    };
+  if (run.type === "full") {
+    // Run Imports check
+    try {
+      const res = execSync(
+        `./rc/rc ${tempDir}/piscine-go/${
+          run.question.attrs.expectedFiles[0]
+        } ${run.question.attrs.allowedFunctions.join(" ")}`
+      );
+    } catch (error: any) {
+      execSync(`rm -rf ${tempDir}`);
+      return {
+        passed: false,
+        output: error.stdout.toString().trim() || error.toString(),
+      };
+    }
   }
 
   // Run Test
