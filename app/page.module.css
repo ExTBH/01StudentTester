@@ -26,6 +26,8 @@
     margin: 20px;
     /* background: #aaa; */
     margin-left: 20px; /* Add margin between tree and code container */
+    display: flex;
+    flex-direction: column;
 }
 
 .codeButtonsContainer {
