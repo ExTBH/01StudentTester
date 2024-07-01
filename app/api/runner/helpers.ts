@@ -1,7 +1,6 @@
 import { Run, RunResult } from "@/app/types";
 import { execSync } from "child_process";
 import {
-  copyFile,
   copyFileSync,
   existsSync,
   lstatSync,
@@ -79,10 +78,13 @@ export function prepareAndRunTest(run: Run): RunResult {
         ""
       );
 
-      copyFileSync(
-        `./go-tests/solutions/${run.question.name}.go`,
-        `${tempDir}/go-tests/solutions/${run.question.name}.go`
-      );
+      // some tests dont have answer files like: swapbits, its defined as a function in the lib/
+      if (existsSync(`./go-tests/solutions/${run.question.name}.go`)) {
+        copyFileSync(
+          `./go-tests/solutions/${run.question.name}.go`,
+          `${tempDir}/go-tests/solutions/${run.question.name}.go`
+        );
+      } 
     }
 
     // Create student answer file
