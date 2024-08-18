@@ -34,7 +34,8 @@ COPY . /app
 RUN npm install
 
 
-RUN ./prepare.sh
+# To always get latest questions
+# RUN ./prepare.sh
 
 RUN npm run build
 

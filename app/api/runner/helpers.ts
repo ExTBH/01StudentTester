@@ -56,23 +56,31 @@ export function prepareAndRunTest(run: Run): RunResult {
       `${tempDir}/go-tests/tests/${run.question.name}_test/main.go`,
       ""
     );
+
     copyFileSync(
       `./go-tests/tests/${run.question.name}_test/main.go`,
       `${tempDir}/go-tests/tests/${run.question.name}_test/main.go`
     );
 
-    // if the question is a function
+    // if the question is a program
     if (run.question.attrs.expectedFiles[0].endsWith("main.go")) {
       createFileSync(
         `${tempDir}/go-tests/solutions/${run.question.name}/main.go`,
         ""
       );
-
       copyFileSync(
         `./go-tests/solutions/${run.question.name}/main.go`,
         `${tempDir}/go-tests/solutions/${run.question.name}/main.go`
       );
     } else {
+      // some soulutions dont exist like: `countcharacter`, answer is named `count-character`
+      // error is thrown if the file does not exist
+      if (!existsSync(`./go-tests/solutions/${run.question.name}.go`)) {
+        throw new Error(
+          `Solution file for ${run.question.name} not found,\nexpected: ./go-tests/solutions/${run.question.name}/main.go`
+        );
+      }
+
       createFileSync(
         `${tempDir}/go-tests/solutions/${run.question.name}.go`,
         ""
@@ -84,7 +92,7 @@ export function prepareAndRunTest(run: Run): RunResult {
           `./go-tests/solutions/${run.question.name}.go`,
           `${tempDir}/go-tests/solutions/${run.question.name}.go`
         );
-      } 
+      }
     }
 
     // Create student answer file
