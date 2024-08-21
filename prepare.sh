@@ -28,3 +28,9 @@ cd go-tests
 
 # apply patch to allow concurrency in tests
 git apply ../challenge.patch
+
+# Ensure the fix_solution_names.sh script is executable
+chmod +x /app/fix_solution_names.sh
+
+# Run the script to fix solution names
+/app/fix_solution_names.sh
